@@ -12,10 +12,8 @@ import { ErrorState, Loading } from '../components/ui/States'
 import { useAsync } from '../hooks/useAsync'
 import { useToast } from '../hooks/useToast'
 import { formatCurrency, formatDateTime } from '../lib/format'
-import { orderService } from '../services/orderService'
+import { nextStatuses, orderService } from '../services/orderService'
 import type { OrderItem, OrderStatus } from '../types'
-
-const statuses: OrderStatus[] = ['Pending', 'Processing', 'Completed', 'Cancelled']
 
 export default function OrderDetails() {
   const { orderId = '' } = useParams()
@@ -129,14 +127,15 @@ export default function OrderDetails() {
 
           <Card title="Update status">
             <Select
-              options={statuses.map((value) => ({ label: value, value }))}
+              options={[order.status, ...nextStatuses(order.status)].map((value) => ({ label: value, value }))}
               value={order.status}
-              disabled={isBusy || order.status === 'Cancelled'}
+              disabled={isBusy || nextStatuses(order.status).length === 0}
               onChange={(event) => changeStatus(event.target.value as OrderStatus)}
             />
             <p className="mt-2 text-xs text-slate-500">
-              Status changes raise a notification, mirroring the Service Bus message the Notification Service will
-              consume.
+              {nextStatuses(order.status).length === 0
+                ? `${order.status} is a final status, so this order can no longer change.`
+                : 'Status changes raise a notification, mirroring the Service Bus message the Notification Service will consume.'}
             </p>
           </Card>
         </div>

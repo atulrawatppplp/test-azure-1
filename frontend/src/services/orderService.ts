@@ -10,6 +10,17 @@ import type {
 } from '../types'
 import { delay, getDb, nextId, paginate, saveDb } from './mock/mockDb'
 
+const allowedTransitions: Record<OrderStatus, OrderStatus[]> = {
+  Pending: ['Processing', 'Completed', 'Cancelled'],
+  Processing: ['Completed', 'Cancelled'],
+  Completed: [],
+  Cancelled: [],
+}
+
+export function nextStatuses(status: OrderStatus): OrderStatus[] {
+  return allowedTransitions[status]
+}
+
 function filter(orders: Order[], query: OrderQuery) {
   const search = query.search?.trim().toLowerCase()
   return orders.filter((order) => {
@@ -87,6 +98,11 @@ export const orderService = {
     const db = getDb()
     const order = db.orders.find((candidate) => candidate.orderId === orderId)
     if (!order) throw new Error(`Order ${orderId} was not found.`)
+    if (status === order.status) return order
+    if (!allowedTransitions[order.status].includes(status)) {
+      throw new Error(`An order in status ${order.status} cannot move to ${status}.`)
+    }
+    if (status === 'Cancelled') return orderService.cancelOrder(orderId)
     order.status = status
     if (status === 'Completed') order.paymentStatus = 'Paid'
     db.notifications.unshift({
