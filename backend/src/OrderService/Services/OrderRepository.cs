@@ -30,7 +30,7 @@ public class OrderRepository(OrderDbContext context, IOrderEventPublisher publis
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(order => order.CustomerName.Contains(search));
+            query = query.Where(order => order.CustomerId.Contains(search));
         }
 
         if (status.HasValue)
@@ -61,7 +61,6 @@ public class OrderRepository(OrderDbContext context, IOrderEventPublisher publis
         var order = new Order
         {
             CustomerId = request.CustomerId,
-            CustomerName = request.CustomerName,
             Items = request.Items
                 .Select(item => new OrderItem
                 {
@@ -138,13 +137,12 @@ public class OrderRepository(OrderDbContext context, IOrderEventPublisher publis
 
     private Task PublishAsync(string eventType, Order order, CancellationToken cancellationToken) =>
         publisher.PublishAsync(
-            new OrderEvent(eventType, order.OrderId, order.CustomerName, order.TotalAmount, order.Status.ToString(), DateTime.UtcNow),
+            new OrderEvent(eventType, order.OrderId, order.CustomerId, order.TotalAmount, order.Status.ToString(), DateTime.UtcNow),
             cancellationToken);
 
     private static OrderResponse ToResponse(Order order) => new(
         order.OrderId,
         order.CustomerId,
-        order.CustomerName,
         order.OrderDate,
         order.TotalAmount,
         order.Status.ToString(),

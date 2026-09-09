@@ -33,8 +33,8 @@ using (var scope = app.Services.CreateScope())
     if (string.IsNullOrWhiteSpace(connectionString))
     {
         context.Database.EnsureCreated();
-        ProductSeeder.Seed(context);
     }
+    ProductSeeder.Seed(context);
 }
 
 if (app.Environment.IsDevelopment())

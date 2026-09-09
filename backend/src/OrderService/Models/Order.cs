@@ -25,10 +25,6 @@ public class Order
     [MaxLength(100)]
     public string CustomerId { get; set; } = string.Empty;
 
-    [Required]
-    [MaxLength(200)]
-    public string CustomerName { get; set; } = string.Empty;
-
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
     public decimal TotalAmount { get; set; }

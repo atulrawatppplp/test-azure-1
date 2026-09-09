@@ -7,7 +7,6 @@ public record OrderItemResponse(Guid OrderItemId, Guid OrderId, Guid ProductId, 
 public record OrderResponse(
     Guid OrderId,
     string CustomerId,
-    string CustomerName,
     DateTime OrderDate,
     decimal TotalAmount,
     string Status,
@@ -34,10 +33,6 @@ public class CreateOrderRequest
     [MaxLength(100)]
     public string CustomerId { get; set; } = "CUST-SELF";
 
-    [Required]
-    [StringLength(200, MinimumLength = 3)]
-    public string CustomerName { get; set; } = string.Empty;
-
     [MinLength(1)]
     public List<CreateOrderItemRequest> Items { get; set; } = [];
 }
@@ -61,4 +56,4 @@ public record OrderStatsResponse(
 public record PagedResult<T>(IReadOnlyCollection<T> Items, int Page, int PageSize, int TotalCount);
 
 /// <summary>Payload published to the Azure Service Bus topic consumed by the Notification Service.</summary>
-public record OrderEvent(string EventType, Guid OrderId, string CustomerName, decimal TotalAmount, string Status, DateTime OccurredAt);
+public record OrderEvent(string EventType, Guid OrderId, string CustomerId, decimal TotalAmount, string Status, DateTime OccurredAt);

@@ -41,6 +41,7 @@ using (var scope = app.Services.CreateScope())
     {
         scope.ServiceProvider.GetRequiredService<OrderDbContext>().Database.EnsureCreated();
     }
+    OrderSeeder.Seed(scope.ServiceProvider.GetRequiredService<OrderDbContext>());
 }
 
 if (app.Environment.IsDevelopment())

@@ -19,6 +19,7 @@ public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContex
             entity.Property(order => order.Status).HasConversion<string>().HasMaxLength(20);
             entity.Property(order => order.PaymentStatus).HasConversion<string>().HasMaxLength(20);
             entity.HasIndex(order => order.Status);
+            entity.HasIndex(order => order.CustomerId);
             entity.HasMany(order => order.Items)
                 .WithOne()
                 .HasForeignKey(item => item.OrderId)
@@ -30,6 +31,8 @@ public class OrderDbContext(DbContextOptions<OrderDbContext> options) : DbContex
             entity.ToTable("OrderItems");
             entity.HasKey(item => item.OrderItemId);
             entity.Property(item => item.Price).HasColumnType("decimal(18,2)");
+            entity.HasIndex(item => item.OrderId);
+            entity.HasIndex(item => item.ProductId);
         });
     }
 }
