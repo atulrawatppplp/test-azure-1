@@ -12,10 +12,8 @@ import { useToast } from '../hooks/useToast'
 import { formatCurrency } from '../lib/format'
 import { orderService } from '../services/orderService'
 
-const TAX_RATE = 0.18
-
 export default function Cart() {
-  const { lines, subtotal, setQuantity, removeItem, clear } = useCart()
+  const { lines, itemCount, subtotal, setQuantity, removeItem, clear } = useCart()
   const { user } = useAuth()
   const navigate = useNavigate()
   const toast = useToast()
@@ -23,9 +21,6 @@ export default function Cart() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
   const [customerName, setCustomerName] = useState(user?.name ?? '')
   const [isPlacing, setIsPlacing] = useState(false)
-
-  const tax = Number((subtotal * TAX_RATE).toFixed(2))
-  const total = Number((subtotal + tax).toFixed(2))
 
   const placeOrder = async () => {
     if (customerName.trim().length < 3) {
@@ -113,16 +108,16 @@ export default function Cart() {
           <Card title="Summary" className="h-fit">
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <dt className="text-slate-500">Subtotal</dt>
-                <dd className="font-medium text-slate-900">{formatCurrency(subtotal)}</dd>
+                <dt className="text-slate-500">Line items</dt>
+                <dd className="font-medium text-slate-900">{lines.length}</dd>
               </div>
               <div className="flex justify-between">
-                <dt className="text-slate-500">Tax (18%)</dt>
-                <dd className="font-medium text-slate-900">{formatCurrency(tax)}</dd>
+                <dt className="text-slate-500">Units</dt>
+                <dd className="font-medium text-slate-900">{itemCount}</dd>
               </div>
               <div className="flex justify-between border-t border-slate-200 pt-2 text-base">
-                <dt className="font-semibold text-slate-700">Total</dt>
-                <dd className="font-semibold text-slate-900">{formatCurrency(total)}</dd>
+                <dt className="font-semibold text-slate-700">Order total</dt>
+                <dd className="font-semibold text-slate-900">{formatCurrency(subtotal)}</dd>
               </div>
             </dl>
             <div className="mt-4 space-y-2">
@@ -162,7 +157,7 @@ export default function Cart() {
           <div className="rounded-lg bg-slate-50 p-3 text-sm">
             <div className="flex justify-between text-slate-600">
               <span>{lines.length} line item(s)</span>
-              <span className="font-semibold text-slate-900">{formatCurrency(total)}</span>
+              <span className="font-semibold text-slate-900">{formatCurrency(subtotal)}</span>
             </div>
           </div>
         </div>

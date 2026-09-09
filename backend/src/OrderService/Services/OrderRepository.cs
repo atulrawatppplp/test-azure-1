@@ -88,6 +88,16 @@ public class OrderRepository(OrderDbContext context, IOrderEventPublisher publis
             return null;
         }
 
+        if (request.Status == OrderStatus.Cancelled)
+        {
+            return await CancelAsync(orderId, cancellationToken);
+        }
+
+        if (order.Status != request.Status && !IsTransitionAllowed(order.Status, request.Status))
+        {
+            throw new InvalidOperationException($"An order in status {order.Status} cannot move to {request.Status}.");
+        }
+
         order.Status = request.Status;
         order.PaymentStatus = request.PaymentStatus
             ?? (request.Status == OrderStatus.Completed ? PaymentStatus.Paid : order.PaymentStatus);
@@ -132,6 +142,13 @@ public class OrderRepository(OrderDbContext context, IOrderEventPublisher publis
             orders.Count(order => order.Status == OrderStatus.Cancelled),
             orders.Where(order => order.Status != OrderStatus.Cancelled).Sum(order => order.TotalAmount));
     }
+
+    private static bool IsTransitionAllowed(OrderStatus current, OrderStatus next) => current switch
+    {
+        OrderStatus.Pending => next is OrderStatus.Processing or OrderStatus.Completed or OrderStatus.Cancelled,
+        OrderStatus.Processing => next is OrderStatus.Completed or OrderStatus.Cancelled,
+        _ => false,
+    };
 
     private Task<Order?> Load(Guid orderId, CancellationToken cancellationToken) =>
         context.Orders.Include(order => order.Items).FirstOrDefaultAsync(order => order.OrderId == orderId, cancellationToken);

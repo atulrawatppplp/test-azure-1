@@ -39,8 +39,15 @@ public class OrdersController(IOrderRepository repository) : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<OrderResponse>> UpdateOrder(Guid id, UpdateOrderRequest request, CancellationToken cancellationToken)
     {
-        var order = await repository.UpdateAsync(id, request, cancellationToken);
-        return order is null ? NotFound() : Ok(order);
+        try
+        {
+            var order = await repository.UpdateAsync(id, request, cancellationToken);
+            return order is null ? NotFound() : Ok(order);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return Problem(exception.Message, statusCode: StatusCodes.Status409Conflict);
+        }
     }
 
     [HttpPost("{id:guid}/cancel")]
