@@ -30,8 +30,14 @@ export default function Cart() {
     setIsPlacing(true)
     try {
       const order = await orderService.createOrder({
+        customerId: user?.userId ?? 'USR-1',
         customerName: customerName.trim(),
-        items: lines.map((line) => ({ productId: line.product.productId, quantity: line.quantity })),
+        items: lines.map((line) => ({
+          productId: line.product.productId,
+          productName: line.product.productName,
+          quantity: line.quantity,
+          price: line.product.price,
+        })),
       })
       clear()
       setIsCheckoutOpen(false)

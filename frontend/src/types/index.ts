@@ -94,8 +94,9 @@ export interface CreateProductRequest {
 }
 
 export interface CreateOrderRequest {
+  customerId: string
   customerName: string
-  items: { productId: string; quantity: number }[]
+  items: { productId: string; productName: string; quantity: number; price: number }[]
 }
 
 export interface DashboardStats {

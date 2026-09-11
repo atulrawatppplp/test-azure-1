@@ -9,7 +9,8 @@
       "applicationUrl": "http://localhost:5167",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "hotReloadEnabled": false
     },
     "https": {
       "commandName": "Project",
@@ -19,7 +20,8 @@
       "applicationUrl": "https://localhost:7167;http://localhost:5167",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "hotReloadEnabled": false
     }
   }
 }

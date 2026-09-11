@@ -30,8 +30,9 @@ public class CreateOrderItemRequest
 
 public class CreateOrderRequest
 {
+    [Required]
     [MaxLength(100)]
-    public string CustomerId { get; set; } = "CUST-SELF";
+    public string CustomerId { get; set; } = string.Empty;
 
     [MinLength(1)]
     public List<CreateOrderItemRequest> Items { get; set; } = [];
