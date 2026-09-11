@@ -1,0 +1,21 @@
+## Node / frontend
+node_modules/
+dist/
+.env
+.env.local
+*.local
+.vite/
+
+## .NET
+bin/
+obj/
+*.user
+appsettings.Development.local.json
+
+## Editors / OS
+.vs/
+!.vscode/
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+.DS_Store
